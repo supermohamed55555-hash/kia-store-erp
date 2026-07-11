@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox spacing="20" style="-fx-background-color: transparent;" 
+      xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.kiastore.ui.controller.ReceivingController"
+      nodeOrientation="RIGHT_TO_LEFT">
+
+    <!-- Right Side: Recent Batches List -->
+    <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="600">
+        <Label text="شحنات المخازن المستلمة مؤخراً" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+        <TableView fx:id="batchesTable" VBox.vgrow="ALWAYS" 
+                   style="-fx-background-color: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 4; -fx-background-radius: 4;">
+            <columns>
+                <TableColumn fx:id="colPart" text="الصنف" prefWidth="200"/>
+                <TableColumn fx:id="colSupplier" text="المورد" prefWidth="120"/>
+                <TableColumn fx:id="colQty" text="الكمية" prefWidth="70"/>
+                <TableColumn fx:id="colPrice" text="سعر الشراء" prefWidth="90"/>
+                <TableColumn fx:id="colInvoice" text="رقم الفاتورة" prefWidth="100"/>
+                <TableColumn fx:id="colDate" text="تاريخ الاستلام" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Left Side: Receive Stock Form -->
+    <VBox prefWidth="440" spacing="15">
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" 
+                    style="-fx-background-color: transparent; -fx-background: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+            
+            <VBox spacing="20" style="-fx-padding: 20;">
+                <Label text="استلام شحنة جديدة" 
+                       style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+
+                <!-- Part Selection Autocomplete Search -->
+                <VBox spacing="8">
+                    <Label text="ابحث واختر الصنف:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold;"/>
+                    <TextField fx:id="partSearchField" promptText="اكتب اسم الصنف أو الكود لتصفيته..." onKeyReleased="#onPartSearchKeyReleased"
+                               style="-fx-background-color: #F9FAFB; -fx-border-color: #E5E7EB; -fx-border-radius: 4;"/>
+                    <ComboBox fx:id="partComboBox" promptText="اختر صنفاً..." prefWidth="400"
+                              style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                </VBox>
+
+                <!-- Batch Details -->
+                <GridPane hgap="10" vgap="15">
+                    <Label text="المورد:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <ComboBox fx:id="supplierComboBox" promptText="اختر مورداً..." prefWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="الكمية المستلمة:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextField fx:id="quantityField" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="سعر الشراء للقطعة:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextField fx:id="purchasePriceField" promptText="0.00 EGP" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <Label text="رقم فاتورة الشراء:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextField fx:id="invoiceNumberField" promptText="رقم فاتورة المورد" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                </GridPane>
+
+                <VBox spacing="8">
+                    <Label text="ملاحظات الشحنة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextArea fx:id="notesArea" promptText="حالة الشحنة، شروط النقل..." prefHeight="80" wrapText="true"/>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="إلغاء التحديد" onAction="#onClearForm" 
+                            style="-fx-background-color: transparent; -fx-text-fill: #363636; -fx-border-color: #363636; -fx-border-radius: 4; -fx-font-family: 'Tajawal'; -fx-cursor: hand;"/>
+                    <Button fx:id="btnSave" text="📥  استلام وتحديث المخزون" onAction="#onReceiveStock" 
+                            style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+</HBox>

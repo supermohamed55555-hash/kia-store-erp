@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20" style="-fx-background-color: transparent;" 
+      xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.kiastore.ui.controller.AuditLogController"
+      nodeOrientation="RIGHT_TO_LEFT">
+
+    <!-- Top Filter Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+        <Label text="سجل الرقابة والعمليات" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <HBox alignment="CENTER" spacing="10">
+            <Label text="تصفية حسب العملية:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+            <ComboBox fx:id="actionFilterComboBox" promptText="كل العمليات" onAction="#onFilterChanged" prefWidth="150"/>
+        </HBox>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Label text="بحث سريع:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+            <TextField fx:id="searchField" promptText="اسم الموظف أو الجدول..." onKeyReleased="#onSearchKeyReleased" prefWidth="200"/>
+        </HBox>
+    </HBox>
+
+    <!-- Audit Logs Table -->
+    <TableView fx:id="auditTable" VBox.vgrow="ALWAYS" 
+               style="-fx-background-color: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 4; -fx-background-radius: 4;">
+        <columns>
+            <TableColumn fx:id="colId" text="المعرف" prefWidth="60"/>
+            <TableColumn fx:id="colUser" text="الموظف" prefWidth="120"/>
+            <TableColumn fx:id="colAction" text="نوع العملية" prefWidth="130"/>
+            <TableColumn fx:id="colTable" text="الجدول المتأثر" prefWidth="120"/>
+            <TableColumn fx:id="colRecordId" text="رقم السجل" prefWidth="80"/>
+            <TableColumn fx:id="colIp" text="عنوان IP" prefWidth="130"/>
+            <TableColumn fx:id="colDate" text="التاريخ والوقت" prefWidth="180"/>
+        </columns>
+    </TableView>
+
+    <!-- Details Diff Viewer Panel -->
+    <HBox spacing="20" prefHeight="180" style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+            <Label text="البيانات السابقة (قبل التعديل):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070; -fx-font-weight: bold;"/>
+            <TextArea fx:id="oldDataArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" 
+                      style="-fx-font-family: 'Consolas', 'Courier New', monospace; -fx-font-size: 12; -fx-background-color: #F9FAFB;"/>
+        </VBox>
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+            <Label text="البيانات الجديدة (بعد التعديل / تفاصيل):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070; -fx-font-weight: bold;"/>
+            <TextArea fx:id="newDataArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" 
+                      style="-fx-font-family: 'Consolas', 'Courier New', monospace; -fx-font-size: 12; -fx-background-color: #F9FAFB;"/>
+        </VBox>
+    </HBox>
+
+</VBox>

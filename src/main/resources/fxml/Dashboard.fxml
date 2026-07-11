@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" 
+            xmlns="http://javafx.com/javafx/21" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.kiastore.ui.controller.DashboardController">
+
+    <VBox spacing="25" style="-fx-padding: 10 20 20 20;" nodeOrientation="RIGHT_TO_LEFT">
+        
+        <!-- Header & Period Filter -->
+        <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+            <Label text="تقارير المبيعات وتحليلات الأداء" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📋  تقرير نهاية اليوم" onAction="#onShowEndOfDayReport"
+                    style="-fx-background-color: #3B82F6; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            <Label text="فترة التقرير:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+            <ComboBox fx:id="periodComboBox" onAction="#onPeriodChanged" prefWidth="150"/>
+        </HBox>
+
+        <!-- Stats Grid (5 Analytics Cards) -->
+        <GridPane hgap="15" vgap="15">
+            <!-- Total Parts Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-orange" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="إجمالي الأصناف" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="totalPartsCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="📦" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="totalPartsTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+            
+            <!-- Low Stock Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-red" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="نواقص المخزون" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="lowStockPartsCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="🚨" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="lowStockPartsTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Inventory Value Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-green" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="قيمة المخزون الكلية" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="inventoryValue" text="0.00 EGP" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="💵" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="inventoryValueTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Period Invoices Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-blue" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label fx:id="invoicesTitleLabel" text="فواتير اليوم" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="todayInvoicesCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="🧾" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="todayInvoicesTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Period Sales Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-purple" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label fx:id="salesTitleLabel" text="مبيعات اليوم" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="todaySalesAmount" text="0.00 EGP" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="📈" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="todaySalesTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Row 1: Line Chart (Sales Trend) & Top Items Chart -->
+        <HBox spacing="20">
+            <!-- Line Chart: Sales Trend -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="540"
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-padding: 20;">
+                <Label text="مخطط حركة المبيعات اليومية" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <LineChart fx:id="salesTrendChart" legendVisible="false" prefHeight="250" nodeOrientation="LEFT_TO_RIGHT">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+
+            <!-- Bar Chart: Top Selling Parts -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="540"
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-padding: 20;">
+                <Label text="الأصناف الأكثر مبيعاً (Top Parts)" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <BarChart fx:id="topPartsChart" legendVisible="false" prefHeight="250" nodeOrientation="LEFT_TO_RIGHT">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </HBox>
+
+        <!-- Row 2: Pie Chart (Payment methods) & Returns/Cancellations stats -->
+        <HBox spacing="20">
+            <!-- Pie Chart: Payment Methods -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="540"
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-padding: 20;">
+                <Label text="توزيع طرق الدفع للفواتير" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <PieChart fx:id="paymentMethodChart" labelsVisible="true" prefHeight="220" nodeOrientation="LEFT_TO_RIGHT"/>
+            </VBox>
+
+            <!-- Active vs Cancelled Invoices Stats -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="540"
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-padding: 20;">
+                <Label text="إحصائيات الإلغاء والمرتجع للفواتير" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <VBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 20 0 0 0;">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="الفواتير النشطة والمكتملة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="activeInvoicesLabel" text="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #22C55E;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="الفواتير الملغاة بالكامل:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="cancelledInvoicesLabel" text="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #EF4444;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="إجمالي المرتجعات المالية للقطع:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="returnedAmountLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #FAA11F;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="صافي أرباح الفترة المتوقعة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="profitAmountLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #10B981;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </HBox>
+
+    </VBox>
+</ScrollPane>

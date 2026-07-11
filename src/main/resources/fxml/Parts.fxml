@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Root is now StackPane to allow the side panel overlay to float on top -->
+<StackPane fx:id="partsRootStack"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.kiastore.ui.controller.PartsController">
+
+    <!-- Original layout is completely unchanged -->
+    <HBox spacing="20" style="-fx-background-color: transparent;"
+          nodeOrientation="RIGHT_TO_LEFT">
+
+        <!-- Right Side: Parts List Table -->
+        <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="600">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="قائمة قطع الغيار" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <!-- Add New Part Button -->
+                <Button fx:id="btnAddPart" text="➕  إضافة صنف جديد" onAction="#onAddNewPart"
+                        style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                <!-- Export Excel Button -->
+                <Button text="📥  تصدير Excel" onAction="#onExportExcel"
+                        style="-fx-background-color: #10B981; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            </HBox>
+
+            <TableView fx:id="partsTable" VBox.vgrow="ALWAYS"
+                       style="-fx-background-color: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 4; -fx-background-radius: 4;">
+                <columns>
+                    <TableColumn fx:id="colInternalCode" text="الكود الداخلي" prefWidth="90"/>
+                    <TableColumn fx:id="colFullName" text="الاسم الكامل للصنف" prefWidth="250"/>
+                    <TableColumn fx:id="colPrice" text="سعر البيع" prefWidth="80"/>
+                    <TableColumn fx:id="colStock" text="المخزون" prefWidth="70"/>
+                    <TableColumn fx:id="colMinStock" text="الحد الأدنى" prefWidth="70"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Left Side: Add/Edit Form & Quick Info Panel -->
+        <VBox prefWidth="440" spacing="15">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: transparent; -fx-background: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+
+                <VBox spacing="20" style="-fx-padding: 20;">
+
+                    <!-- Section Header -->
+                    <HBox alignment="CENTER_LEFT">
+                        <Label fx:id="formHeaderLabel" text="تفاصيل الصنف"
+                               style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <!-- Low Stock Alert Label -->
+                        <Label fx:id="lowStockAlertBadge" text="⚠️ مخزون منخفض!" visible="false" managed="false"
+                               style="-fx-background-color: rgba(239, 68, 68, 0.15); -fx-text-fill: #EF4444; -fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 4 8; -fx-background-radius: 12;"/>
+                    </HBox>
+
+                    <!-- Structured Part Name Generation Preview -->
+                    <VBox spacing="5" style="-fx-background-color: #F9FAFB; -fx-padding: 12; -fx-border-color: #E5E7EB; -fx-border-radius: 4;">
+                        <Label text="الاسم التلقائي المولد:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="generatedNamePreview" text="-" wrapText="true"
+                               style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #FAA11F;"/>
+                    </VBox>
+
+                    <!-- Structured Name Fields -->
+                    <GridPane hgap="10" vgap="12">
+                        <Label text="نوع القطعة:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="partTypeField" promptText="مثال: تيل فرامل" onKeyTyped="#onFormFieldsChanged"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0" HBox.hgrow="ALWAYS"/>
+
+                        <Label text="الموقع بالسيارة:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="locationField" promptText="مثال: أمامي" onKeyTyped="#onFormFieldsChanged"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="اسم السيارة:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="carNameField" promptText="مثال: سيراتو" onKeyTyped="#onFormFieldsChanged"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="سنة الموديل:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="carModelField" promptText="مثال: 2010" onKeyTyped="#onFormFieldsChanged"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="الشركة المصنعة:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="manufacturerField" promptText="مثال: Bosch" onKeyTyped="#onFormFieldsChanged"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+
+                    <!-- Codes & Inventory Attributes -->
+                    <GridPane hgap="10" vgap="12">
+                        <Label text="رقم القطعة (OEM):" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="partNumberField" promptText="مثال: F3-5960" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="الكود الداخلي:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="internalCodeField" promptText="مثال: KIA-102" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="الباركود الدولي:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="barcodeField" promptText="رقم الباركود" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="سعر البيع (EGP):" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="salePriceField" promptText="0.00" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="سعر الشراء (EGP):" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="purchasePriceField" promptText="0.00" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                        <Label text="الحد الأدنى:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="minStockField" promptText="5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                        <Label text="المخزون الحالي:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="currentStockField" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    </GridPane>
+
+                    <!-- Compatibility & Extras -->
+                    <VBox spacing="8">
+                        <Label text="السيارات المتوافقة (JSON قائمة):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextArea fx:id="compatibleCarsArea" promptText='مثال: ["كيا سيراتو 2010-2015", "هيونداي إلنترا"]' prefHeight="60" wrapText="true"/>
+
+                        <Label text="البدائل المتاحة (JSON قائمة):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextArea fx:id="alternativesArea" promptText='مثال: ["BOSCH-3012", "DENSO-P99"]' prefHeight="60" wrapText="true"/>
+
+                        <Label text="ملاحظات ووصف الصنف:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextArea fx:id="descriptionArea" promptText="ملاحظات إضافية، مكان التخزين بالمحل..." prefHeight="60" wrapText="true"/>
+                    </VBox>
+
+                    <!-- Quick Info Metrics (Profit, Suppliers, History) -->
+                    <VBox fx:id="quickInfoVBox" spacing="10" style="-fx-background-color: #F9FAFB; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 4;">
+                        <Label text="لوحة معلومات سريعة" style="-fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="مكان التخزين (الرف):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="infoLocationLabel" text="-" style="-fx-font-family: 'Tajawal'; -fx-font-weight: bold;"/>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="آخر سعر شراء:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="infoPurchasePriceLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-weight: bold;"/>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="هامش الربح المتوقع:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="infoProfitLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-text-fill: #22C55E;"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="btnDelete" text="🗑️  حذف" onAction="#onDeletePart"
+                                style="-fx-background-color: #EF4444; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="إلغاء" onAction="#onCancelEdit"
+                                style="-fx-background-color: transparent; -fx-text-fill: #363636; -fx-border-color: #363636; -fx-border-radius: 4; -fx-font-family: 'Tajawal'; -fx-cursor: hand;"/>
+                        <Button fx:id="btnSave" text="💾  حفظ" onAction="#onSavePart"
+                                style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+
+    </HBox>
+
+    <!-- Side Panel placeholder — populated programmatically by PartDetailPanel -->
+    <!-- The overlay Region and the VBox panel are injected into this StackPane by PartsController -->
+
+</StackPane>

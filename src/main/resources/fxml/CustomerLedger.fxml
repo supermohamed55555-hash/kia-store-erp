@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.openjfx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.kiastore.ui.controller.CustomerLedgerController"
+      styleClass="page-root"
+      style="-fx-background-color: #F8F9FE;"
+      spacing="0">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #1E2A45; -fx-padding: 18 24 18 24;">
+        <Label text="📒  كشف حسابات العملاء الآجلة"
+               style="-fx-font-family: 'Tajawal'; -fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="totalBalanceLabel" text="إجمالي الديون: 0.00 EGP"
+               style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-text-fill: #F87171; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- Search + Filter Bar -->
+    <HBox spacing="12" style="-fx-padding: 14 24 10 24; -fx-background-color: #F0F4FF;">
+        <TextField fx:id="searchField" promptText="🔍  ابحث باسم العميل أو رقم الهاتف"
+                   style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-pref-width: 300;"/>
+        <Button text="🔄  تحديث" onAction="#onRefresh"
+                style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-background-color: #3B82F6; -fx-text-fill: white; -fx-cursor: hand;"/>
+        <CheckBox fx:id="showZeroBalanceCheck" text="إظهار المسدّدين بالكامل"
+                  style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;" onAction="#onRefresh"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="➕  إضافة عميل / رصيد آجل" onAction="#onAddCustomer"
+                style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-background-color: #F59E0B; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <Button text="💳  تسجيل دفعة سداد" onAction="#onRecordPayment"
+                style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-background-color: #10B981; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <Button text="🖨  طباعة كشف الحساب" onAction="#onPrintStatement"
+                style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-background-color: #6366F1; -fx-text-fill: white; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Summary Table -->
+    <TableView fx:id="ledgerTable" VBox.vgrow="ALWAYS"
+               style="-fx-font-family: 'Tajawal';">
+        <columns>
+            <TableColumn fx:id="colName"       text="اسم العميل"         prefWidth="200"/>
+            <TableColumn fx:id="colPhone"      text="رقم الهاتف"         prefWidth="140"/>
+            <TableColumn fx:id="colInvoiced"   text="إجمالي الفواتير الآجلة"  prefWidth="175"/>
+            <TableColumn fx:id="colPaid"       text="إجمالي المسدَّد"     prefWidth="150"/>
+            <TableColumn fx:id="colBalance"    text="الرصيد المتبقي"      prefWidth="150"/>
+        </columns>
+        <placeholder>
+            <Label text="لا توجد حسابات عملاء آجلة حالياً"
+                   style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-text-fill: #9CA3AF;"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Bottom: Detail section for selected customer -->
+    <TitledPane fx:id="detailPane" text="📋  تفاصيل الفواتير الآجلة للعميل المحدد"
+                expanded="false" collapsible="true"
+                style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;">
+        <TableView fx:id="detailTable" prefHeight="200"
+                   style="-fx-font-family: 'Tajawal';">
+            <columns>
+                <TableColumn fx:id="colInvNo"    text="رقم الفاتورة"   prefWidth="150"/>
+                <TableColumn fx:id="colInvDate"  text="التاريخ"         prefWidth="160"/>
+                <TableColumn fx:id="colInvTotal" text="إجمالي الفاتورة" prefWidth="140"/>
+                <TableColumn fx:id="colInvPaid"  text="المدفوع"         prefWidth="120"/>
+                <TableColumn fx:id="colInvDue"   text="المتبقي"         prefWidth="120"/>
+                <TableColumn fx:id="colInvNotes" text="ملاحظات"         prefWidth="200"/>
+            </columns>
+            <placeholder>
+                <Label text="اختر عميلاً من الجدول أعلاه"
+                       style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-text-fill: #9CA3AF;"/>
+            </placeholder>
+        </TableView>
+    </TitledPane>
+</VBox>

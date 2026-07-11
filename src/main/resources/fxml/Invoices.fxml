@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox spacing="20" style="-fx-background-color: transparent;" 
+      xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.kiastore.ui.controller.InvoicesController"
+      nodeOrientation="RIGHT_TO_LEFT">
+
+    <!-- Right Side: Invoices List & Control panel -->
+    <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="540">
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="الفواتير الأخيرة" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📥  تصدير المبيعات لـ Excel" onAction="#onExportInvoicesExcel"
+                    style="-fx-background-color: #10B981; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        </HBox>
+        
+        <TableView fx:id="invoicesTable" VBox.vgrow="ALWAYS" 
+                   style="-fx-background-color: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 4; -fx-background-radius: 4;">
+            <columns>
+                <TableColumn fx:id="colInvNumber" text="رقم الفاتورة" prefWidth="140"/>
+                <TableColumn fx:id="colCustomer" text="العميل" prefWidth="100"/>
+                <TableColumn fx:id="colTotal" text="المبلغ النهائي" prefWidth="90"/>
+                <TableColumn fx:id="colStatus" text="الحالة" prefWidth="80"/>
+                <TableColumn fx:id="colDate" text="التاريخ" prefWidth="110"/>
+            </columns>
+        </TableView>
+
+        <!-- Actions on Selected Invoice -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #FFFFFF; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+            <Label text="التحكم بالفاتورة المحددة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnPrint" text="🖨️  طباعة" onAction="#onPrintInvoice"
+                    style="-fx-background-color: #3B82F6; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            <Button fx:id="btnReturnItem" text="🔄  إرجاع صنف" onAction="#onReturnItem"
+                    style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            <Button fx:id="btnCancel" text="🚫  إلغاء بالكامل" onAction="#onCancelInvoice"
+                    style="-fx-background-color: #EF4444; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Left Side: Issue Invoice / Cart Creator -->
+    <VBox prefWidth="540" spacing="15">
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" 
+                    style="-fx-background-color: transparent; -fx-background: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-background-radius: 8;">
+            
+            <VBox spacing="20" style="-fx-padding: 20;">
+                <Label text="إنشاء فاتورة جديدة" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+
+                <!-- Customer Details -->
+                <GridPane hgap="10" vgap="12">
+                    <Label text="اسم العميل:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextField fx:id="customerNameField" promptText="أحمد محمد" GridPane.columnIndex="1" GridPane.rowIndex="0" HBox.hgrow="ALWAYS"/>
+
+                    <Label text="رقم الهاتف:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextField fx:id="customerPhoneField" promptText="01xxxxxxxxx" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
+
+                <!-- Part Search & Add To Cart -->
+                <VBox spacing="8" style="-fx-background-color: #F9FAFB; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 4;">
+                    <Label text="إضافة صنف للفاتورة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold;"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="partSearchField" promptText="ابحث عن الصنف..." onKeyReleased="#onPartSearchKeyReleased" HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="partComboBox" promptText="اختر صنفاً..." prefWidth="240"/>
+                    </HBox>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="الكمية المطلوبة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <TextField fx:id="quantityField" text="1" prefWidth="60"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="📥  إضافة للسلّة" onAction="#onAddToCart"
+                                style="-fx-background-color: #363636; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Current Cart Table -->
+                <VBox spacing="5" prefHeight="180">
+                    <Label text="سلة المشتريات الحالية:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-font-weight: bold;"/>
+                    <TableView fx:id="cartTable" VBox.vgrow="ALWAYS" 
+                               style="-fx-background-color: #FFFFFF; -fx-border-color: #E5E7EB; -fx-border-radius: 4;">
+                        <columns>
+                            <TableColumn fx:id="colCartPart" text="الصنف" prefWidth="220"/>
+                            <TableColumn fx:id="colCartQty" text="الكمية" prefWidth="60"/>
+                            <TableColumn fx:id="colCartUnitPrice" text="السعر" prefWidth="80"/>
+                            <TableColumn fx:id="colCartTotalPrice" text="الإجمالي" prefWidth="90"/>
+                        </columns>
+                    </TableView>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button text="🗑️  حذف المحدد" onAction="#onRemoveFromCart"
+                                style="-fx-background-color: transparent; -fx-text-fill: #EF4444; -fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Invoice Summary & Payment -->
+                <VBox spacing="10" style="-fx-background-color: #F9FAFB; -fx-padding: 15; -fx-border-color: #E5E7EB; -fx-border-radius: 4;">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="الإجمالي الفرعي:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-text-fill: #707070;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="subtotalLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="خصم إضافي (EGP):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-text-fill: #707070;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="discountField" text="0.00" prefWidth="100" onKeyReleased="#onDiscountChanged" alignment="CENTER_RIGHT"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="المبلغ النهائي المستحق:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="finalAmountLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #22C55E;"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="طريقة الدفع:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                        <ComboBox fx:id="paymentMethodComboBox" prefWidth="120" onAction="#onPaymentMethodChanged"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <!-- Shown only when CREDIT is selected -->
+                    <HBox fx:id="creditPaymentBox" alignment="CENTER_LEFT" spacing="15" visible="false" managed="false">
+                        <Label text="💳  المدفوع مقدماً (EGP):" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-text-fill: #3B82F6; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="amountPaidField" text="0.00" prefWidth="110" alignment="CENTER_RIGHT"/>
+                    </HBox>
+                    <HBox fx:id="creditRemainingBox" alignment="CENTER_LEFT" spacing="15" visible="false" managed="false">
+                        <Label text="📋  المبلغ الآجل المتبقي:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13; -fx-text-fill: #EF4444; -fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="amountDueLabel" text="0.00 EGP" style="-fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #EF4444;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Notes -->
+                <VBox spacing="8">
+                    <Label text="ملاحظات الفاتورة:" style="-fx-font-family: 'Tajawal'; -fx-font-size: 13;"/>
+                    <TextArea fx:id="notesArea" promptText="ملاحظات العميل، طريقة التسليم..." prefHeight="50" wrapText="true"/>
+                </VBox>
+
+                <!-- Submit Button -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="إلغاء الفاتورة بالكامل" onAction="#onClearCart" 
+                            style="-fx-background-color: transparent; -fx-text-fill: #363636; -fx-border-color: #363636; -fx-border-radius: 4; -fx-font-family: 'Tajawal'; -fx-cursor: hand;"/>
+                    <Button fx:id="btnSubmitInvoice" text="💾  حفظ وإصدار الفاتورة" onAction="#onSubmitInvoice" 
+                            style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-weight: bold; -fx-padding: 10 20; -fx-cursor: hand;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+</HBox>

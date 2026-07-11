@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" 
+            xmlns="http://javafx.com/javafx/21" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.kiastore.ui.controller.WelcomeController">
+    
+    <VBox spacing="25" style="-fx-padding: 10 20 20 20;">
+        
+        <!-- Welcome Header & Logo -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label text="KIA Store" style="-fx-font-family: 'Tajawal'; -fx-font-size: 32; -fx-font-weight: 800; -fx-text-fill: #FAA11F;"/>
+            <VBox>
+                <Label text="مرحباً بك في نظام إدارة المحل" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                <Label fx:id="welcomeDateTimeLabel" text="السبت، 11 يوليو 2026" style="-fx-font-family: 'Tajawal'; -fx-font-size: 12; -fx-text-fill: #707070;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Stats Grid (5 Cards) -->
+        <GridPane hgap="15" vgap="15">
+            <!-- Total Parts Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-orange" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="إجمالي الأصناف" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="totalPartsCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="📦" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="totalPartsTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+            
+            <!-- Low Stock Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-red" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="نواقص المخزون" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="lowStockPartsCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="🚨" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="lowStockPartsTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Inventory Value Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-green" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="قيمة المخزون الكلية" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="inventoryValue" text="0.00 EGP" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="💵" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="inventoryValueTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Today's Invoices Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-blue" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="فواتير اليوم" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="todayInvoicesCount" text="0" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="🧾" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="todayInvoicesTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+
+            <!-- Today's Sales Card -->
+            <VBox spacing="10" styleClass="card-stat, stat-purple" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="مبيعات اليوم" style="-fx-font-family: 'Tajawal'; -fx-font-size: 11; -fx-text-fill: #707070;"/>
+                        <Label fx:id="todaySalesAmount" text="0.00 EGP" style="-fx-font-family: 'Inter'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                    </VBox>
+                    <StackPane styleClass="stat-icon-wrapper">
+                        <Label text="📈" styleClass="stat-icon" style="-fx-font-size: 16;"/>
+                    </StackPane>
+                </HBox>
+                <Label fx:id="todaySalesTrend" text="-" styleClass="stat-trend, stat-trend-neutral"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Quick Actions & Mini Sales Chart -->
+        <HBox spacing="25">
+            <!-- Left Side: Quick Actions Panel -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="500" 
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #E5E7EB; -fx-border-radius: 12; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 10, 0, 0, 2);">
+                <Label text="الوصول السريع" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <VBox spacing="10">
+                    <Button fx:id="btnQuickInvoice" text="➕  فاتورة مبيعات جديدة" onAction="#onQuickInvoice" styleClass="btn-quick"
+                            style="-fx-background-color: #FAA11F; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 12; -fx-background-radius: 6;" 
+                            prefWidth="500"/>
+                    <Button fx:id="btnQuickReceive" text="📥  استلام شحنة جديدة" onAction="#onQuickReceive" styleClass="btn-quick"
+                            style="-fx-background-color: #1E1E2E; -fx-text-fill: #FFFFFF; -fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 12; -fx-background-radius: 6;" 
+                            prefWidth="500"/>
+                    <Button text="🔍  البحث في قطع الغيار" onAction="#onQuickSearch" styleClass="btn-quick"
+                            style="-fx-background-color: transparent; -fx-text-fill: #1E1E2E; -fx-border-color: #1E1E2E; -fx-border-radius: 6; -fx-border-width: 1; -fx-font-family: 'Tajawal'; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 12;" 
+                            prefWidth="500"/>
+                </VBox>
+            </VBox>
+
+            <!-- Right Side: Today vs Yesterday Sales Chart -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" prefWidth="500"
+                  style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #E5E7EB; -fx-border-radius: 12; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 10, 0, 0, 2);">
+                <Label text="مقارنة مبيعات اليوم والأمس" style="-fx-font-family: 'Tajawal'; -fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+                
+                <BarChart fx:id="salesComparisonChart" legendVisible="false" prefHeight="160" nodeOrientation="LEFT_TO_RIGHT">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" tickLabelFill="#363636"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" tickLabelFill="#363636"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </HBox>
+
+        <!-- Recent Activity Feed (Last 10 actions) -->
+        <VBox spacing="15" 
+              style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 10, 0, 0, 4);">
+            
+            <Label text="آخر النشاطات في النظام" style="-fx-font-family: 'Tajawal'; -fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #363636;"/>
+            
+            <VBox fx:id="activityFeedVBox" spacing="12">
+                <!-- Dynamic Activity Rows will be injected here -->
+            </VBox>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

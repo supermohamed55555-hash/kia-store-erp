@@ -1,0 +1,464 @@
+/* ==========================================
+   KIA Store ERP - Premium Design System CSS
+   ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+/* Variables and Tokens */
+.root {
+    /* Fonts */
+    -fx-font-family: 'Tajawal', 'Inter', -apple-system, sans-serif;
+    
+    /* Colors (Light Mode Default) */
+    -color-bg: #F8F9FA;
+    -color-surface: #FFFFFF;
+    -color-dark: #363636;
+    -color-text-primary: #363636;
+    -color-text-secondary: #707070;
+    -color-accent: #FAA11F;      /* KIA Orange */
+    -color-accent-hover: #E08F10;
+    -color-accent-soft: rgba(250, 161, 31, 0.1);
+    -color-border: #E5E7EB;
+    
+    /* Semantic Colors */
+    -color-success: #22C55E;
+    -color-warning: #FAA11F;
+    -color-danger: #EF4444;
+    -color-info: #3B82F6;
+    
+    /* Radii */
+    -radius-sm: 4px;
+    -radius-md: 12px;
+    -radius-lg: 12px;
+}
+
+/* Dark Mode Theme */
+.dark-theme {
+    -color-bg: #2A2A2A;
+    -color-surface: #363636;
+    -color-text-primary: #FFFFFF;
+    -color-text-secondary: #CCCCCC;
+    -color-border: #4A4A4A;
+}
+
+/* Basic Layouts */
+.main-bg {
+    -fx-background-color: -color-bg;
+}
+
+.card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+/* Typography */
+.text-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-fill: -color-text-primary;
+}
+
+.text-subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-fill: -color-text-secondary;
+}
+
+.text-bold {
+    -fx-font-weight: 700;
+}
+
+/* Forms and Inputs */
+.text-field, .password-field, .combo-box, .text-area {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: -radius-sm;
+    -fx-border-color: -color-border;
+    -fx-border-radius: -radius-sm;
+    -fx-border-width: 1px;
+    -fx-text-fill: -color-text-primary;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused, .text-area:focused {
+    -fx-border-color: -color-accent;
+    -fx-background-color: -color-surface;
+    -fx-effect: dropshadow(three-pass-box, rgba(250, 161, 31, 0.2), 4, 0, 0, 0);
+}
+
+/* Buttons */
+.button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: -radius-sm;
+    -fx-cursor: hand;
+}
+
+/* Primary Button (KIA Orange Accent) */
+.btn-primary {
+    -fx-background-color: -color-accent;
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-primary:hover {
+    -fx-background-color: -color-accent-hover;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #C07000;
+}
+
+/* Secondary Button (Neutral Dark) */
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text-primary;
+    -fx-border-color: -color-dark;
+    -fx-border-radius: -radius-sm;
+    -fx-border-width: 1px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Semantic Badges */
+.badge {
+    -fx-padding: 4px 8px;
+    -fx-background-radius: 12px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-success {
+    -fx-background-color: rgba(34, 197, 94, 0.15);
+    -fx-text-fill: -color-success;
+}
+
+.badge-danger {
+    -fx-background-color: rgba(239, 68, 68, 0.15);
+    -fx-text-fill: -color-danger;
+}
+
+.badge-warning {
+    -fx-background-color: rgba(250, 161, 31, 0.15);
+    -fx-text-fill: -color-warning;
+}
+
+.badge-info {
+    -fx-background-color: rgba(59, 130, 246, 0.15);
+    -fx-text-fill: -color-info;
+}
+
+/* Sidebar and Navigation */
+.sidebar {
+    -fx-background-color: #1E1E2E;
+}
+
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A0AEC0;
+    -fx-alignment: center-left;
+    -fx-padding: 12px 20px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-border-width: 0 4px 0 0; /* Right border for RTL */
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sidebar-btn.active {
+    -fx-background-color: rgba(250, 161, 31, 0.08);
+    -fx-text-fill: #FAA11F;
+    -fx-border-color: #FAA11F;
+    -fx-font-weight: bold;
+}
+
+/* User avatar box at bottom of sidebar */
+.sidebar-user-box {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 8px;
+    -fx-padding: 10px;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.avatar-circle {
+    -fx-background-color: #FAA11F;
+    -fx-background-radius: 20px;
+    -fx-min-width: 36px;
+    -fx-min-height: 36px;
+    -fx-max-width: 36px;
+    -fx-max-height: 36px;
+    -fx-alignment: center;
+}
+
+/* Table styling */
+.table-view {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-radius: -radius-sm;
+}
+
+.table-view .column-header {
+    -fx-background-color: -color-bg;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -color-text-primary;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+}
+
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: rgba(250, 161, 31, 0.03);
+}
+
+/* Charts styling */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
+    -fx-stroke: #E5E7EB;
+    -fx-stroke-dash-array: 2 4;
+}
+
+.dark-theme .chart-vertical-grid-lines, .dark-theme .chart-horizontal-grid-lines {
+    -fx-stroke: #4A4A4A;
+}
+
+.axis {
+    -fx-stroke: -color-border;
+}
+
+.axis-label {
+    -fx-text-fill: -color-text-secondary;
+    -fx-font-family: 'Tajawal';
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tick-label {
+    -fx-fill: -color-text-secondary;
+    -fx-font-family: 'Tajawal';
+    -fx-font-size: 11px;
+}
+
+/* Line Chart */
+.chart-series-line {
+    -fx-stroke: -color-accent;
+    -fx-stroke-width: 3px;
+}
+
+.chart-line-symbol {
+    -fx-background-color: -color-accent, white;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* Vibrant Bar Colors for Top Selling Parts and Welcome comparison */
+.chart-bar {
+    -fx-bar-gap-ratio: 0.1;
+    -fx-category-gap-ratio: 0.4;
+}
+
+/* Color Palettes for Bar Chart */
+.default-color0.chart-bar { -fx-bar-fill: #FAA11F; } /* KIA Orange */
+.default-color1.chart-bar { -fx-bar-fill: #3B82F6; } /* Blue */
+.default-color2.chart-bar { -fx-bar-fill: #10B981; } /* Emerald */
+.default-color3.chart-bar { -fx-bar-fill: #8B5CF6; } /* Purple */
+.default-color4.chart-bar { -fx-bar-fill: #EC4899; } /* Pink */
+
+/* Color Palettes for Pie Chart Slices */
+.default-color0.chart-pie { -fx-pie-color: #22C55E; } /* Cash - Green */
+.default-color1.chart-pie { -fx-pie-color: #3B82F6; } /* Card - Blue */
+.default-color2.chart-pie { -fx-pie-color: #9CA3AF; } /* Other - Gray */
+
+.chart-pie-label {
+    -fx-fill: -color-text-primary;
+    -fx-font-family: 'Tajawal';
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Micro-animations and Fade Ins */
+.fade-in {
+    -fx-opacity: 0;
+}
+
+/* Card Accents and Colored Icons */
+.card-stat {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 12px;
+    -fx-padding: 16px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 8, 0, 0, 2);
+    -fx-border-color: -color-border;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+}
+
+.stat-icon-wrapper {
+    -fx-background-radius: 20px;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-alignment: center;
+}
+
+/* Orange: Total Parts */
+.stat-orange .stat-icon-wrapper {
+    -fx-background-color: rgba(250, 161, 31, 0.12);
+}
+.stat-orange .stat-icon {
+    -fx-text-fill: #FAA11F;
+}
+
+/* Red: Low Stock */
+.stat-red .stat-icon-wrapper {
+    -fx-background-color: rgba(239, 68, 68, 0.12);
+}
+.stat-red .stat-icon {
+    -fx-text-fill: #EF4444;
+}
+
+/* Green: Inventory Value */
+.stat-green .stat-icon-wrapper {
+    -fx-background-color: rgba(34, 197, 94, 0.12);
+}
+.stat-green .stat-icon {
+    -fx-text-fill: #22C55E;
+}
+
+/* Blue: Today's Invoices */
+.stat-blue .stat-icon-wrapper {
+    -fx-background-color: rgba(59, 130, 246, 0.12);
+}
+.stat-blue .stat-icon {
+    -fx-text-fill: #3B82F6;
+}
+
+/* Purple: Today's Sales */
+.stat-purple .stat-icon-wrapper {
+    -fx-background-color: rgba(139, 92, 246, 0.12);
+}
+.stat-purple .stat-icon {
+    -fx-text-fill: #8B5CF6;
+}
+
+/* Trend indicators */
+.stat-trend {
+    -fx-padding: 2px 6px;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Tajawal';
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.stat-trend-up {
+    -fx-background-color: rgba(34, 197, 94, 0.12);
+    -fx-text-fill: #22C55E;
+}
+.stat-trend-down {
+    -fx-background-color: rgba(239, 68, 68, 0.12);
+    -fx-text-fill: #EF4444;
+}
+.stat-trend-neutral {
+    -fx-background-color: rgba(107, 114, 128, 0.12);
+    -fx-text-fill: #6B7280;
+}
+
+/* Recent Activity Feed Styles */
+.activity-item-even {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 12px 15px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #F3F4F6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.activity-item-odd {
+    -fx-background-color: #F9FAFB;
+    -fx-padding: 12px 15px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #F3F4F6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.activity-dot {
+    -fx-min-width: 8px;
+    -fx-min-height: 8px;
+    -fx-max-width: 8px;
+    -fx-max-height: 8px;
+    -fx-background-radius: 4px;
+}
+.activity-dot-green {
+    -fx-background-color: #22C55E;
+}
+.activity-dot-blue {
+    -fx-background-color: #3B82F6;
+}
+.activity-dot-red {
+    -fx-background-color: #EF4444;
+}
+.activity-dot-orange {
+    -fx-background-color: #FAA11F;
+}
+
+/* Quick Action Hover Scale-up */
+.btn-quick {
+    -fx-cursor: hand;
+}
+.btn-quick:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 12, 0, 0, 4);
+}
+
+/* Custom TabPane Styling for Side Panel */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+.tab-pane .tab:selected {
+    -fx-border-color: transparent transparent #FAA11F transparent;
+    -fx-border-width: 0 0 3 0;
+}
+.tab-pane .tab .label {
+    -fx-text-fill: #707070;
+    -fx-font-family: 'Tajawal';
+    -fx-font-size: 12px;
+}
+.tab-pane .tab:selected .label {
+    -fx-text-fill: #1E1E2E;
+    -fx-font-weight: bold;
+}
+.tab-pane .headers-region {
+    -fx-alignment: center-left;
+}
+
