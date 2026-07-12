@@ -18,6 +18,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class MainShellController {
 
@@ -65,6 +69,15 @@ public class MainShellController {
     private long lastKeyTime = 0;
     private int barcodeCharCount = 0;
     private boolean likelyBarcodeScan = false;
+
+    // Search debounce: waits 300ms after last keystroke before querying DB
+    private final ScheduledExecutorService debounceExecutor =
+        Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "search-debounce");
+            t.setDaemon(true);
+            return t;
+        });
+    private ScheduledFuture<?> pendingSearch;
 
     @FXML
     public void initialize() {
@@ -267,17 +280,17 @@ public class MainShellController {
             event.consume();
         }
 
-        // Propagate search to active view
-        if (activeController instanceof Searchable searchable) {
-            searchable.search(term);
-        } else if (term != null && !term.isBlank() && !(activeController instanceof PartsController)) {
-            showParts();
-            if (activeController instanceof Searchable searchable) {
-                searchable.search(term);
-            }
+        // Propagate search to active view — debounced 300 ms
+        final String termToSearch = term;
+        if (pendingSearch != null && !pendingSearch.isDone()) {
+            pendingSearch.cancel(false);
         }
+        pendingSearch = debounceExecutor.schedule(() ->
+            javafx.application.Platform.runLater(() -> runSearch(termToSearch)),
+            300, TimeUnit.MILLISECONDS
+        );
 
-        // Update autocomplete suggestion
+        // Update autocomplete suggestion immediately (lightweight, no DB call)
         if (term == null || term.isBlank()) {
             searchSuggestionLabel.setText("");
         } else {
@@ -286,6 +299,18 @@ public class MainShellController {
                 searchSuggestionLabel.setText(suggestion);
             } else {
                 searchSuggestionLabel.setText("");
+            }
+        }
+    }
+
+    /** Runs the actual search against the active controller (always on FX thread). */
+    private void runSearch(String term) {
+        if (activeController instanceof Searchable searchable) {
+            searchable.search(term);
+        } else if (term != null && !term.isBlank() && !(activeController instanceof PartsController)) {
+            showParts();
+            if (activeController instanceof Searchable searchable) {
+                searchable.search(term);
             }
         }
     }

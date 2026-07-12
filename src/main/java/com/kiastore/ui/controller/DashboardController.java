@@ -57,6 +57,13 @@ public class DashboardController {
     private List<Return> returns;
     private List<Part> parts;
 
+    // ── 5-minute dashboard cache ──────────────────────────────────────────
+    private static List<Invoice> cachedInvoices;
+    private static List<Return>  cachedReturns;
+    private static List<Part>    cachedParts;
+    private static long          cacheTimestamp = 0;
+    private static final long    CACHE_TTL_MS   = 5 * 60 * 1_000L; // 5 minutes
+
     @FXML
     public void initialize() {
         periodComboBox.setItems(FXCollections.observableArrayList(
@@ -64,15 +71,39 @@ public class DashboardController {
         ));
         periodComboBox.setValue("كل الأوقات (All Time)");
 
-        loadData();
+        loadData(false);   // use cache if still fresh
         renderDashboard();
     }
 
-    private void loadData() {
+    /**
+     * Loads (or reuses cached) dashboard data.
+     * @param forceRefresh  true → always hit the DB; false → use cache if < 5 min old
+     */
+    private void loadData(boolean forceRefresh) {
+        long now = System.currentTimeMillis();
+        if (!forceRefresh && cachedInvoices != null && (now - cacheTimestamp) < CACHE_TTL_MS) {
+            // Cache hit — reuse stored data
+            invoices = cachedInvoices;
+            returns  = cachedReturns;
+            parts    = cachedParts;
+            return;
+        }
+        // Cache miss or forced refresh — query DB
         invoices = AppContext.get().invoiceService.all();
-        returns = AppContext.get().returnDao.findAll();
-        parts = AppContext.get().partService.all();
+        returns  = AppContext.get().returnDao.findAll();
+        parts    = AppContext.get().partService.all();
+        // Store in cache
+        cachedInvoices  = invoices;
+        cachedReturns   = returns;
+        cachedParts     = parts;
+        cacheTimestamp  = System.currentTimeMillis();
     }
+
+    /** Clears the static cache so next open forces a fresh DB load. */
+    public static void invalidateCache() {
+        cacheTimestamp = 0;
+    }
+
 
     private void renderDashboard() {
         // Filter invoices based on selected period
@@ -364,7 +395,8 @@ public class DashboardController {
 
     @FXML
     private void onPeriodChanged() {
-        loadData();
+        // Period changed by user → force fresh DB load, bypass cache
+        loadData(true);
         renderDashboard();
     }
 
