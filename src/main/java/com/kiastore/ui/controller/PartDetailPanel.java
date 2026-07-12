@@ -17,6 +17,15 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -750,12 +759,64 @@ public class PartDetailPanel {
         try {
             Path destDir = Paths.get(System.getProperty("user.home"), "kia-store", "images", "parts", String.valueOf(p.getId()));
             Files.createDirectories(destDir);
-            Path destFile = destDir.resolve(chosen.getName());
-            Files.copy(chosen.toPath(), destFile, StandardCopyOption.REPLACE_EXISTING);
+            // Always save as JPEG for consistency / smaller file size
+            String baseName = chosen.getName().replaceAll("(?i)\\.[^.]+$", "") + ".jpg";
+            Path destFile = destDir.resolve(baseName);
+            compressAndSaveImage(chosen, destFile.toFile());
             String uri = destFile.toUri().toString();
             addImageAndSave(uri, p);
         } catch (IOException ex) {
             showAlert("فشل رفع الصورة: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Resizes the source image to at most 800×800 pixels and compresses it
+     * as JPEG with quality reduction until the file is ≤ 300 KB.
+     * Original oversized images are never written to disk.
+     */
+    private void compressAndSaveImage(File src, File dest) throws IOException {
+        BufferedImage original = ImageIO.read(src);
+        if (original == null) throw new IOException("لا يمكن قراءة ملف الصورة");
+
+        // ── 1. Resize to max 800×800 keeping aspect ratio ──
+        int w = original.getWidth();
+        int h = original.getHeight();
+        int maxDim = 800;
+        if (w > maxDim || h > maxDim) {
+            double scale = (double) maxDim / Math.max(w, h);
+            w = (int) (w * scale);
+            h = (int) (h * scale);
+        }
+        BufferedImage resized = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = resized.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2.drawImage(original, 0, 0, w, h, null);
+        g2.dispose();
+
+        // ── 2. JPEG-compress with descending quality until ≤ 300 KB ──
+        long maxBytes = 300L * 1024;   // 300 KB
+        float quality = 0.85f;
+        byte[] jpegBytes = null;
+        while (quality >= 0.40f) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(quality);
+            writer.setOutput(ImageIO.createImageOutputStream(baos));
+            writer.write(null, new IIOImage(resized, null, null), param);
+            writer.dispose();
+            jpegBytes = baos.toByteArray();
+            if (jpegBytes.length <= maxBytes) break;
+            quality -= 0.10f;
+        }
+        if (jpegBytes == null) throw new IOException("فشل ضغط الصورة");
+
+        // ── 3. Write final bytes to destination ──
+        try (FileImageOutputStream fos = new FileImageOutputStream(dest)) {
+            fos.write(jpegBytes);
         }
     }
 

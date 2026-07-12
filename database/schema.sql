@@ -144,3 +144,15 @@ CREATE TABLE IF NOT EXISTS customer_payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
+
+-- AUDIT LOG ARCHIVE (for rows older than 6 months)
+CREATE TABLE IF NOT EXISTS audit_logs_archive LIKE audit_logs;
+
+-- ─── PERFORMANCE INDEXES ───────────────────────────────────────────────────
+CREATE INDEX idx_search_keyword    ON search_index(keyword);
+CREATE INDEX idx_audit_created     ON audit_logs(created_at);
+CREATE INDEX idx_parts_stock       ON parts(current_stock);
+CREATE INDEX idx_parts_active      ON parts(is_active);
+CREATE INDEX idx_invoices_date     ON invoices(created_at);
+CREATE INDEX idx_invoice_items_part ON invoice_items(part_id);
+CREATE INDEX idx_batches_part      ON batches(part_id);

@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PartsController implements MainShellController.Searchable {
 
@@ -63,6 +64,9 @@ public class PartsController implements MainShellController.Searchable {
     private final ObservableList<Part> observablePartsList = FXCollections.observableArrayList();
     private Part selectedPart;
     private PartDetailPanel detailPanel;
+    /** Guard so only one background full-load runs at a time */
+    private final AtomicBoolean fullLoadRunning = new AtomicBoolean(false);
+    private static final int INITIAL_PAGE_SIZE = 200;
 
     @FXML
     public void initialize() {
@@ -91,8 +95,8 @@ public class PartsController implements MainShellController.Searchable {
         // Instantiate programmatic side panel
         detailPanel = new PartDetailPanel(partsRootStack, this);
 
-        // Load data
-        refreshTable(AppContext.get().partService.all());
+        // Load data – show first 200 rows instantly, then load the rest in background
+        lazyLoadParts();
 
         // Listen for table selection
         partsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -125,10 +129,38 @@ public class PartsController implements MainShellController.Searchable {
         }
     }
 
+    /**
+     * Lazy-load strategy:
+     *   1. Immediately show first INITIAL_PAGE_SIZE parts so the screen feels instant.
+     *   2. Silently fetch the rest in a background thread and append them.
+     */
+    private void lazyLoadParts() {
+        List<Part> firstPage = AppContext.get().partDao.findActivePaged(0, INITIAL_PAGE_SIZE);
+        refreshTable(firstPage);
+
+        if (firstPage.size() == INITIAL_PAGE_SIZE && fullLoadRunning.compareAndSet(false, true)) {
+            Thread bgThread = new Thread(() -> {
+                try {
+                    List<Part> rest = AppContext.get().partDao.findActivePaged(INITIAL_PAGE_SIZE, Integer.MAX_VALUE);
+                    if (!rest.isEmpty()) {
+                        javafx.application.Platform.runLater(() -> {
+                            observablePartsList.addAll(rest);
+                        });
+                    }
+                } finally {
+                    fullLoadRunning.set(false);
+                }
+            }, "parts-bg-loader");
+            bgThread.setDaemon(true);
+            bgThread.start();
+        }
+    }
+
     private void refreshTable(List<Part> list) {
         observablePartsList.setAll(list);
         partsTable.setItems(observablePartsList);
     }
+
 
     @Override
     public void search(String query) {
@@ -155,7 +187,7 @@ public class PartsController implements MainShellController.Searchable {
      */
     public void openPartDetail(Part part) {
         // Reload full list first so the part is visible in the table
-        refreshTable(AppContext.get().partService.all());
+        lazyLoadParts();
         partsTable.getSelectionModel().clearSelection();
         // Select the matching row
         for (Part p : observablePartsList) {
@@ -339,7 +371,7 @@ public class PartsController implements MainShellController.Searchable {
             new Alert(Alert.AlertType.INFORMATION, "تم حفظ الصنف بنجاح").showAndWait();
             
             // Refresh table and reset form
-            refreshTable(AppContext.get().partService.all());
+            lazyLoadParts();
             onAddNewPart();
 
         } catch (NumberFormatException e) {
@@ -377,7 +409,7 @@ public class PartsController implements MainShellController.Searchable {
                 );
 
                 new Alert(Alert.AlertType.INFORMATION, "تم حذف الصنف بنجاح").showAndWait();
-                refreshTable(AppContext.get().partService.all());
+                lazyLoadParts();
                 onAddNewPart();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "خطأ أثناء الحذف: " + e.getMessage()).showAndWait();

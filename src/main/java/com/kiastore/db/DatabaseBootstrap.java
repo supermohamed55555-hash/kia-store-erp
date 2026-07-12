@@ -2,6 +2,8 @@ package com.kiastore.db;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
+import com.kiastore.dao.AuditLogDao;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,7 +33,12 @@ public final class DatabaseBootstrap {
                 applySql(c, SEED);
             }
         }
+        // Background: archive old audit logs silently (non-blocking)
+        Thread archiveThread = new Thread(() -> new AuditLogDao().archiveOldLogs(), "audit-archive");
+        archiveThread.setDaemon(true);
+        archiveThread.start();
     }
+
 
     private static void ensureDatabase() throws SQLException {
         try (Connection c = ConnectionFactory.serverOnly();

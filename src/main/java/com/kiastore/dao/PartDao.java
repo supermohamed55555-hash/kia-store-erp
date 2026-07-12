@@ -116,6 +116,28 @@ public class PartDao extends BaseDao<Part> {
         return queryList(sql);
     }
 
+    /**
+     * Pagination helper for lazy loading.
+     * @param offset  number of rows to skip
+     * @param limit   max rows to return (use Integer.MAX_VALUE for "all remaining")
+     */
+    public List<Part> findActivePaged(int offset, int limit) {
+        String sql = "SELECT * FROM parts WHERE is_active = TRUE ORDER BY full_name LIMIT ? OFFSET ?";
+        List<Part> out = new ArrayList<>();
+        try (Connection c = conn();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, limit == Integer.MAX_VALUE ? Integer.MAX_VALUE : limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) out.add(extract(rs));
+            }
+        } catch (SQLException e) {
+            throw new DaoException("findActivePaged failed", e);
+        }
+        return out;
+    }
+
+
     public int countAll() {
         try (Connection c = conn();
              PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM parts WHERE is_active = TRUE");

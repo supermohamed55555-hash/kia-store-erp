@@ -119,4 +119,36 @@ public class AuditLogDao extends BaseDao<AuditLog> {
         }
         return out;
     }
+
+    /**
+     * Auto-archive: if audit_logs has more than 50,000 rows,
+     * move records older than 6 months to audit_logs_archive.
+     * Called silently in a background thread at startup.
+     */
+    public void archiveOldLogs() {
+        try (Connection c = conn()) {
+            // Check total count first
+            int count;
+            try (PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM audit_logs");
+                 ResultSet rs = ps.executeQuery()) {
+                count = rs.next() ? rs.getInt(1) : 0;
+            }
+            if (count <= 50_000) return;   // nothing to do
+
+            // Copy old rows to archive
+            try (PreparedStatement ps = c.prepareStatement(
+                    "INSERT IGNORE INTO audit_logs_archive " +
+                    "SELECT * FROM audit_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL 6 MONTH)")) {
+                ps.executeUpdate();
+            }
+            // Delete archived rows from main table
+            try (PreparedStatement ps = c.prepareStatement(
+                    "DELETE FROM audit_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL 6 MONTH)")) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            // Silent – archive is non-critical; log to stderr only
+            System.err.println("[AuditLogDao] archiveOldLogs failed: " + e.getMessage());
+        }
+    }
 }
