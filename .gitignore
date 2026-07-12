@@ -12,3 +12,7 @@ nbproject/
 nbactions.xml
 nb-configuration.xml
 .DS_Store
+# Installer binaries
+installer/kia-store-erp.jar
+installer/xampp-installer.exe
+installer/jdk-installer.exe
